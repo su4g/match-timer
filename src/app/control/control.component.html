@@ -1,8 +1,12 @@
 <div class="screen-preview" #screenRef>
   @for ( screen of timerState.screen; track $index) {
     <div style="display: flex; flex-direction: column; padding: 12px;">
+      <div style="margin-bottom: 4px">
+        <button >
+          <a target="_blank" [href]="'/screen/' + screen.id">分屏打开</a>
+        </button>
+      </div>
       <app-screen [screenId]="screen.id"></app-screen>
-
       <div style="display: flex;gap: 12px;height: 24px;margin-top: 12px;">
         <button (click)="startTime(screen.id)">开始计时{{ screen.id }}</button>
         <button (click)="stopTime(screen.id)">暂停计时{{ screen.id }}</button>
