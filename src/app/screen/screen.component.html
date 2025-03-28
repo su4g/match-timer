@@ -1,0 +1,39 @@
+<div #screenRef class="screen-container">
+    <div>
+        @if(loadingDone) {
+            <div class="screen-count-container">
+                <div 
+                    class="screen-dot" 
+                    [style]="{ 
+                        background: background , 
+                        width: dotSize,
+                        height: dotSize
+                    }"
+                >
+                </div>
+            
+                <div class="screen-number" [style]="{ fontSize: fontSize, color: background }">
+                    @if(isStart) {
+                        @if (onlineNum) {
+                            {{ onlineNum }}
+                        } @else {
+                            {{ timeNum }}
+                        }
+                    } @else {
+                        {{ timeNum }}
+                    }
+                </div>
+            </div>
+            <div class="screen-text-container">
+                <div *ngIf="screenText" class="screen-text-container-1" >
+                    <span [style]="{ color: background }">
+                        {{ screenText }}
+                    </span>
+                </div>
+                <div class="screen-text-container-2">
+                    {{ onceText }}
+                </div>
+            </div>
+        }
+    </div>
+</div>
