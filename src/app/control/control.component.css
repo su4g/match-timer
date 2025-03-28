@@ -3,8 +3,9 @@
   display: flex;
   overflow: hidden;
   gap: 12px;
-  max-height: 300px;
+  max-height: 0;
   margin: 12px;
+  transition: max-height .5s;
 }
 
 .control-container {

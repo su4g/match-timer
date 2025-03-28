@@ -1,6 +1,6 @@
 import {FormArray, FormBuilder, FormsModule, ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import { ChannelService } from '../channel.service';
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ScreenComponent} from '../screen/screen.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -31,6 +31,8 @@ export class ControlComponent implements OnInit {
     return this.channelService.timerState
   }
 
+  @ViewChild('screenRef') screenRef!: ElementRef;
+
   postChannel() {
     this.channelService.channel.postMessage(
       this.channelService.timerState
@@ -54,7 +56,7 @@ export class ControlComponent implements OnInit {
       this.channelService.timerState = Object.assign(
         this.channelService.timerState,
         rawValue
-      );      
+      );
       this.channelService.channel.postMessage(
         this.channelService.timerState
       );
@@ -68,10 +70,8 @@ export class ControlComponent implements OnInit {
       .subscribe(v=>{
         if(v) {
           const { timeMode, groupMember, onceText } = this.controlFormGroup.getRawValue();
-
           switch (timeMode) {
             case 'loop':
-              
               break;
             default:
               for (let index = 0; index < groupMember; index++) {
@@ -82,11 +82,14 @@ export class ControlComponent implements OnInit {
                   text: onceText
                 });
               }
+              if(groupMember) {
+                this.screenRef.nativeElement.style.maxHeight = '300px'
+              }
               break;
           }
         } else {
-
-          
+          this.channelService.timerState.screen = [];
+          this.screenRef.nativeElement.style.maxHeight = '0px'
         }
       });
 

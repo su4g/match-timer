@@ -15,6 +15,8 @@ export interface ScreenStateInfo {
 }
 
 export interface TimerStateInfo {
+  backGroundColor: string;
+  fontFamily: string;
   isStartRound: boolean;
   isEndRound: boolean;
   isStartGroup: boolean;
@@ -45,6 +47,8 @@ export class ChannelService {
   channel!: BroadcastChannel;
 
   timerState: TimerStateInfo = {
+    backGroundColor: '#000',
+    fontFamily: 'led regular',
     isStartRound: false,
     isEndRound: false,
     isStartGroup: false,
@@ -66,7 +70,7 @@ export class ChannelService {
     screen: []
   };
 
-  private initializeState!: TimerStateInfo;
+  public initializeState!: TimerStateInfo;
 
   public updateNotice$ = new Subject();
 

@@ -65,6 +65,14 @@ export class ScreenComponent implements OnInit{
     return this.screenFormGroup.controls['screenText'].value
   }
 
+  get backGroundColor() {
+    return this.screenFormGroup.controls['backGroundColor'].value
+  }
+
+  get fontFamily() {
+    return this.screenFormGroup.controls['fontFamily'].value
+  }
+
   public isFullScreen = false;
 
   private initializeState!: any;
@@ -72,21 +80,21 @@ export class ScreenComponent implements OnInit{
   get background() {
     return this.isStart ?
       (
-        this.onlineNum > 0 ? 
-          this.screenFormGroup.get('onlineNumColor')?.value: 
+        this.onlineNum > 0 ?
+          this.screenFormGroup.get('onlineNumColor')?.value:
           (
-            ( this.screenFormGroup.controls['countNum'].value && this.screenFormGroup.controls['timeNum'].value <= this.screenFormGroup.controls['countNum'].value ) ? 
-            this.screenFormGroup.get('countNumColor')?.value : 
+            ( this.screenFormGroup.controls['countNum'].value && this.screenFormGroup.controls['timeNum'].value <= this.screenFormGroup.controls['countNum'].value ) ?
+            this.screenFormGroup.get('countNumColor')?.value :
             this.screenFormGroup.get('timeNumColor')?.value
           )
       )
        : (
-        this.isStop ? 
+        this.isStop ?
         (
-          ( this.screenFormGroup.controls['countNum'].value && this.screenFormGroup.controls['timeNum'].value <= this.screenFormGroup.controls['countNum'].value ) ? 
-            this.screenFormGroup.get('countNumColor')?.value : 
+          ( this.screenFormGroup.controls['countNum'].value && this.screenFormGroup.controls['timeNum'].value <= this.screenFormGroup.controls['countNum'].value ) ?
+            this.screenFormGroup.get('countNumColor')?.value :
             this.screenFormGroup.get('timeNumColor')?.value
-        ) 
+        )
         : this.screenFormGroup.get('timeNumColor')?.value
        )
   }
@@ -107,6 +115,8 @@ export class ScreenComponent implements OnInit{
 
   ngOnInit(): void {
     this.screenFormGroup = this.fb.group({
+      backGroundColor: false,
+      fontFamily: '',
       isStartRound: false,
       onceText: '',
       screenText: '',
@@ -119,19 +129,19 @@ export class ScreenComponent implements OnInit{
       countNum: 0,
       countNumColor: ''
     });
-    
+
     if(this.screenId) {
       this.listenScreenState();
       setTimeout(() => {
         this.timerState = this.channelService.timerState;
-        this.updateScreenState$.next(this.channelService.timerState.screen);        
+        this.updateScreenState$.next(this.channelService.timerState.screen);
         this.screenFormGroup.patchValue({
           isStartRound: this.timerState['isStartRound']
         });
       }, 0);
       this.channelService.updateNotice$.pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(()=>{        
+      ).subscribe(()=>{
         this.updateScreenState$.next(this.channelService.timerState.screen);
       });
       setTimeout(()=>{
@@ -157,13 +167,13 @@ export class ScreenComponent implements OnInit{
       });
     }
 
-    this.channelService.channel.onmessage = (e)=>{      
+    this.channelService.channel.onmessage = (e)=>{
       this.timerState = e.data;
       const { isStartRound, timeMode, screen } = this.timerState;
       this.validPatchValue({
         isStartRound: isStartRound,
         timeMode: timeMode
-      });      
+      });
       this.updateScreenState$.next(screen);
     }
 
@@ -218,14 +228,16 @@ export class ScreenComponent implements OnInit{
           return item.id == this.screenId
         })
       })
-    ).subscribe(state =>{      
+    ).subscribe(state =>{
       this.validPatchValue(state);
     })
   }
 
   private setTimer() {
-    const { screenText, onceText, timeNum,timeNumColor,onlineNum,onlineNumColor,countNum,countNumColor } = this.timerState;    
+    const { backGroundColor, fontFamily , screenText, onceText, timeNum,timeNumColor,onlineNum,onlineNumColor,countNum,countNumColor } = this.timerState;
     this.screenFormGroup.patchValue({
+      backGroundColor: backGroundColor,
+      fontFamily: fontFamily,
       onceText: onceText,
       screenText: screenText,
       timeNum: Number(timeNum),

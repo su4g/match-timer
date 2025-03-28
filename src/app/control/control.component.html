@@ -1,4 +1,4 @@
-<div class="screen-preview">
+<div class="screen-preview" #screenRef>
   @for ( screen of timerState.screen; track $index) {
     <div style="display: flex; flex-direction: column; padding: 12px;">
       <app-screen [screenId]="screen.id"></app-screen>
@@ -87,6 +87,24 @@
           <button (click)="addLoopGroup()">增加轮询组</button>
         </div>
       }
+
+      <div class="form-item">
+        <span class="form-item-label">
+          计时器字体：
+        </span>
+        <select formControlName="fontFamily">
+          <option value="''">默认</option>
+          <option value="led regular">LCD</option>
+          <option value="eth regular">液晶</option>
+        </select>
+      </div>
+
+      <div class="form-item">
+        <span class="form-item-label">
+          计时器背景：
+        </span>
+        <input type="color" formControlName="backGroundColor" />
+      </div>
     </form>
 
 
