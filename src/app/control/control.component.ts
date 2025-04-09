@@ -4,6 +4,15 @@ import {Component, DestroyRef, ElementRef, inject, OnInit, ViewChild} from '@ang
 import { CommonModule } from '@angular/common';
 import {ScreenComponent} from '../screen/screen.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import { NzColorPickerModule } from 'ng-zorro-antd/color-picker';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+
 
 @Component({
   selector: 'app-control',
@@ -11,7 +20,15 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    ScreenComponent
+    ScreenComponent,
+    NzButtonModule,
+    NzCardModule,
+    NzFormModule,
+    NzInputNumberModule,
+    NzInputModule,
+    NzColorPickerModule,
+    NzFlexModule,
+    NzGridModule
   ],
   templateUrl: './control.component.html',
   standalone: true,

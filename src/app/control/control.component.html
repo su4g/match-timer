@@ -15,115 +15,144 @@
   }
 </div>
 
-@if (controlFormGroup) {
-  <div class="control-container">
-    <form [formGroup]="controlFormGroup">
-      <div class="form-item">
-        <span class="form-item-label">
-          时间模式：
-        </span>
-        <input formControlName="timeNum" />
-        <input type="color" formControlName="timeNumColor" />
-      </div>
-      <div class="form-item">
-        <span class="form-item-label">
-          上线时间：
-        </span>
-        <input formControlName="onlineNum" />
-        <input type="color" formControlName="onlineNumColor" />
-      </div>
-      <div class="form-item">
-        <span class="form-item-label">
-          倒数时间：
-        </span>
-        <input formControlName="countNum" />
-        <input type="color" formControlName="countNumColor" />
-      </div>
-      <div class="form-item">
-        <span class="form-item-label">
-          发射组数：
-        </span>
-        <input formControlName="roundCount" />
-      </div>
-      <div class="form-item">
-        <span class="form-item-label">
-          文字显示：
-        </span>
-        <input formControlName="screenText" />
-
-        <span class="form-item-label" style="margin-left: 12px">
-          随发射变色：
-        </span>
-        <input type="checkbox" formControlName="textChangeColor" />
-      </div>
-      <div class="form-item">
-        <span class="form-item-label">
-          计时模式：
-        </span>
-        <select formControlName="timeMode">
-          <option value="once">单次</option>
-          <option value="loop">轮询</option>
-        </select>
-      </div>
-      @if(controlFormGroup.controls['timeMode'].value === 'once') {
-        <div class="form-item">
-         <span class="form-item-label">
-          并行数：
-        </span>
-          <input formControlName="groupMember" />
-          <span class="form-item-label">
-          <span class="form-item-label" style="margin-left: 12px">
-          并行显示：
-        </span>
-        </span>
-          <input formControlName="onceText" />
-        </div>
-      }
-      @if(controlFormGroup.controls['timeMode'].value === 'loop') {
-        <div class="form-item" formArrayName="loopGroup" >
-          @for(g of $any(controlFormGroup.controls['loopGroup']).controls; track $index) {
-            <form [formGroup]="g">
-              轮询组{{ $index + 1 }}：
-              <input formControlName="text" />
-            </form>
-            <button (click)="removeLoopGroup($index)">删除轮询组</button>
-          }
-          <button (click)="addLoopGroup()">增加轮询组</button>
-        </div>
-      }
-
-      <div class="form-item">
-        <span class="form-item-label">
-          计时器字体：
-        </span>
-        <select formControlName="fontFamily">
-          <option value="''">默认</option>
-          <option value="led regular">LCD</option>
-          <option value="eth regular">液晶</option>
-        </select>
-      </div>
-
-      <div class="form-item">
-        <span class="form-item-label">
-          计时器背景：
-        </span>
-        <input type="color" formControlName="backGroundColor" />
-      </div>
+<nz-card nzTitle="比赛设置">
+  @if (controlFormGroup) {
+    <form nz-form [formGroup]="controlFormGroup">
+        <nz-form-item>
+          <nz-form-label  [nzSm]="2" [nzXs]="24">时间模式</nz-form-label>
+          <nz-form-control  [nzSm]="6" [nzXs]="24">
+            <div nz-flex>
+              <nz-input-number style="flex: 1" nzPlaceHolder="每组时间（S）"  formControlName="timeNum" nzMin="0"  />
+              <nz-color-picker  formControlName="timeNumColor"></nz-color-picker>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="2">上线时间</nz-form-label>
+          <nz-form-control [nzSpan]="6">
+            <div nz-flex>
+              <nz-input-number
+                  style="flex: 1"
+                  nzPlaceHolder="每组时间（S）"
+                  formControlName="onlineNum"
+                  nzMin="0"
+              />
+              <nz-color-picker  formControlName="onlineNumColor"></nz-color-picker>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
     </form>
 
+    <div class="control-container">
+      <form [formGroup]="controlFormGroup">
+        <div class="form-item">
+          <span class="form-item-label">
+            时间模式：
+          </span>
+          <input formControlName="timeNum" />
+          <input type="color" formControlName="timeNumColor" />
+        </div>
+        <div class="form-item">
+          <span class="form-item-label">
+            上线时间：
+          </span>
+          <input formControlName="onlineNum" />
+          <input type="color" formControlName="onlineNumColor" />
+        </div>
+        <div class="form-item">
+          <span class="form-item-label">
+            倒数时间：
+          </span>
+          <input formControlName="countNum" />
+          <input type="color" formControlName="countNumColor" />
+        </div>
+        <div class="form-item">
+          <span class="form-item-label">
+            发射组数：
+          </span>
+          <input formControlName="roundCount" />
+        </div>
+        <div class="form-item">
+          <span class="form-item-label">
+            文字显示：
+          </span>
+          <input formControlName="screenText" />
 
-  <div class="control-btn-container">
-    @if (timerState['isStartRound']) {
-      <button (click)="endRound()">停止轮次</button>
-    } @else {
-      <button (click)="startRound()">开始轮次</button>
-    }
+          <span class="form-item-label" style="margin-left: 12px">
+            随发射变色：
+          </span>
+          <input type="checkbox" formControlName="textChangeColor" />
+        </div>
+        <div class="form-item">
+          <span class="form-item-label">
+            计时模式：
+          </span>
+          <select formControlName="timeMode">
+            <option value="once">单次</option>
+            <option value="loop">轮询</option>
+          </select>
+        </div>
+        @if(controlFormGroup.controls['timeMode'].value === 'once') {
+          <div class="form-item">
+           <span class="form-item-label">
+            并行数：
+          </span>
+            <input formControlName="groupMember" />
+            <span class="form-item-label">
+            <span class="form-item-label" style="margin-left: 12px">
+            并行显示：
+          </span>
+          </span>
+            <input formControlName="onceText" />
+          </div>
+        }
+        @if(controlFormGroup.controls['timeMode'].value === 'loop') {
+          <div class="form-item" formArrayName="loopGroup" >
+            @for(g of $any(controlFormGroup.controls['loopGroup']).controls; track $index) {
+              <form [formGroup]="g">
+                轮询组{{ $index + 1 }}：
+                <input formControlName="text" />
+              </form>
+              <button (click)="removeLoopGroup($index)">删除轮询组</button>
+            }
+            <button (click)="addLoopGroup()">增加轮询组</button>
+          </div>
+        }
 
-    <button (click)="startGroup()">开始组</button>
-    <button (click)="stopGroup()">暂停组</button>
-    <button (click)="endGroup()">停止组</button>
+        <div class="form-item">
+          <span class="form-item-label">
+            计时器字体：
+          </span>
+          <select formControlName="fontFamily">
+            <option value="''">默认</option>
+            <option value="led regular">LCD</option>
+            <option value="eth regular">液晶</option>
+          </select>
+        </div>
 
-    <!--  <button (click)="pushScreen()">添加屏幕</button>-->
-  </div>
-  </div>
-}
+        <div class="form-item">
+          <span class="form-item-label">
+            计时器背景：
+          </span>
+          <input type="color" formControlName="backGroundColor" />
+        </div>
+      </form>
+
+
+    <div class="control-btn-container">
+      @if (timerState['isStartRound']) {
+        <button (click)="endRound()">停止轮次</button>
+      } @else {
+        <button nz-button nzType="primary" (click)="startRound()">开始轮次</button>
+      }
+
+      <button (click)="startGroup()">开始组</button>
+      <button (click)="stopGroup()">暂停组</button>
+      <button (click)="endGroup()">停止组</button>
+
+      <!--  <button (click)="pushScreen()">添加屏幕</button>-->
+    </div>
+    </div>
+  }
+</nz-card>
+
