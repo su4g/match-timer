@@ -14,5 +14,6 @@ export const routes: Routes = [
     {
         path: 'screen/:id',
         component: ScreenComponent
-    }
+    },
+    { path: '', redirectTo: 'control', pathMatch: 'full' },
 ];
