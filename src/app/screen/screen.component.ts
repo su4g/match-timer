@@ -128,7 +128,7 @@ export class ScreenComponent implements OnInit{
   @ViewChild('screenRef') screenRef!: ElementRef;
 
   getStyle() {
-    const size = window.innerHeight / 5;
+    const size = window.innerHeight / 3;
     this.fontSize = `${size}px`;
     this.dotSize = `${size / 1.5}px`
   }
@@ -372,10 +372,8 @@ export class ScreenComponent implements OnInit{
   }
 
   private endTimer() {
-    const { onlineNum, timeNum } = this.screenFormGroup.getRawValue();
-    if(onlineNum) {
-      this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
-    }
+    // const { onlineNum, timeNum } = this.screenFormGroup.getRawValue();
+    this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
     this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
     this.cdr.detectChanges();
     clearInterval(this.timeInterval);
