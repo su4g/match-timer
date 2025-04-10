@@ -12,6 +12,11 @@ import {NzInputModule} from 'ng-zorro-antd/input';
 import { NzColorPickerModule } from 'ng-zorro-antd/color-picker';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import {NzCheckboxModule} from 'ng-zorro-antd/checkbox';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {NzIconModule} from 'ng-zorro-antd/icon';
+import {NzCollapseModule} from 'ng-zorro-antd/collapse';
+import {NzUploadFile, NzUploadModule} from 'ng-zorro-antd/upload';
 
 
 @Component({
@@ -28,7 +33,12 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     NzInputModule,
     NzColorPickerModule,
     NzFlexModule,
-    NzGridModule
+    NzGridModule,
+    NzCheckboxModule,
+    NzSelectModule,
+    NzIconModule,
+    NzCollapseModule,
+    NzUploadModule
   ],
   templateUrl: './control.component.html',
   standalone: true,
@@ -44,11 +54,58 @@ export class ControlComponent implements OnInit {
 
   public controlFormGroup!: UntypedFormGroup;
 
+  public panelActive = true;
+
   get timerState() {
     return this.channelService.timerState
   }
 
   @ViewChild('screenRef') screenRef!: ElementRef;
+
+  beforeUploadTimeNum = (file: NzUploadFile): boolean => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = () => {
+      const base64 = reader.result;
+      localStorage.setItem('timeNumAudioData', base64 as string);
+      const audioPlayer:any = document.querySelector('#timeNumPlayer');
+      const audioData = localStorage.getItem('timeNumAudioData');
+      if (audioData && audioPlayer) {
+        audioPlayer.src = audioData;
+      }
+    };
+    return false;
+  };
+
+  beforeUploadOnlineNum = (file: NzUploadFile): boolean => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = () => {
+      const base64 = reader.result;
+      localStorage.setItem('onlineNumAudioData', base64 as string);
+      const audioPlayer:any = document.querySelector('#onlineNumPlayer');
+      const audioData = localStorage.getItem('onlineNumAudioData');
+      if (audioData && audioPlayer) {
+        audioPlayer.src = audioData;
+      }
+    };
+    return false;
+  };
+
+  beforeUploadCountNum = (file: NzUploadFile): boolean => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = () => {
+      const base64 = reader.result;
+      localStorage.setItem('countNumAudioData', base64 as string);
+      const audioPlayer:any = document.querySelector('#countNumPlayer');
+      const audioData = localStorage.getItem('countNumAudioData');
+      if (audioData && audioPlayer) {
+        audioPlayer.src = audioData;
+      }
+    };
+    return false;
+  };
 
   postChannel() {
     this.channelService.channel.postMessage(
@@ -62,6 +119,22 @@ export class ControlComponent implements OnInit {
       loopGroup: this.fb.array([])
     }));
     this.listenControlChange();
+
+    localStorage.removeItem('countNumAudioData');
+    localStorage.removeItem('onlineNumAudioData');
+    localStorage.removeItem('timeNumAudioData');
+    localStorage.removeItem('audioSetting');
+  }
+
+  changeVolume(e: Event, key: string) {
+    const volume=  (e.target as HTMLAudioElement).volume;
+    const isMuted = (e.target as HTMLAudioElement).muted;
+    const audioSetting = JSON.parse(localStorage.getItem('audioSetting') || JSON.stringify(({})));
+    audioSetting[key] = {
+      volume: volume,
+      muted: isMuted
+    };
+    localStorage.setItem('audioSetting', JSON.stringify(audioSetting));
   }
 
   private  listenControlChange() {
@@ -100,13 +173,15 @@ export class ControlComponent implements OnInit {
                 });
               }
               if(groupMember) {
-                this.screenRef.nativeElement.style.maxHeight = '300px'
+                this.screenRef.nativeElement.style.maxHeight = '400px';
+                this.panelActive = false;
               }
               break;
           }
         } else {
           this.channelService.timerState.screen = [];
           this.screenRef.nativeElement.style.maxHeight = '0px'
+          this.panelActive = true;
         }
       });
 

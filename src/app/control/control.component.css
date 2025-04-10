@@ -1,15 +1,16 @@
+.app-control {
+  padding: 24px;
+}
 
 .screen-preview {
-  display: flex;
   overflow: hidden;
-  gap: 12px;
   max-height: 0;
-  margin: 12px;
+  margin-bottom: 12px;
   transition: max-height .5s;
 }
 
 .control-container {
-  margin: 24px;
+  margin: 4px 0;
 }
 
 .control-btn-container {
@@ -33,14 +34,8 @@ form {
   width: 100px;
 }
 
-/*input {*/
-/*  height: 24px;*/
-/*  padding: 0 6px;*/
-/*}*/
-
-/*select {*/
-/*  height: 28px;*/
-/*  padding: 0 6px;*/
-/*}*/
-
-
+::ng-deep {
+  .ant-collapse-header {
+    padding: 0;
+  }
+}

@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostBinding,
+  inject,
+  Input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { ChannelService } from '../channel.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -17,6 +27,10 @@ import { CommonModule } from '@angular/common';
 })
 export class ScreenComponent implements OnInit{
 
+  @HostBinding('class') get hostClass(){
+    return this.playVoice ? 'full-screen' : 'inner-screen' ;
+  }
+
   private channelService = inject(ChannelService);
 
   private activatedRoute = inject(ActivatedRoute);
@@ -28,6 +42,8 @@ export class ScreenComponent implements OnInit{
   private fb = inject(FormBuilder);
 
   @Input() screenId!: any;
+
+  @Input() playVoice = true;
 
   public timerState!:Record<string, any>;
 
@@ -99,6 +115,10 @@ export class ScreenComponent implements OnInit{
        )
   }
 
+  get isTextChangeColor() {
+    return this.screenFormGroup.get('textChangeColor')?.value;
+  }
+
   public fontSize!: string;
 
   public dotSize!: string;
@@ -115,7 +135,8 @@ export class ScreenComponent implements OnInit{
 
   ngOnInit(): void {
     this.screenFormGroup = this.fb.group({
-      backGroundColor: false,
+      textChangeColor: false,
+      backGroundColor: '',
       fontFamily: '',
       isStartRound: false,
       onceText: '',
@@ -208,6 +229,12 @@ export class ScreenComponent implements OnInit{
     .subscribe(v=>{
       if(v) {
         this.startTimer();
+      } else {
+        setTimeout(()=>{
+          if(!this.screenFormGroup.controls['isStop'].value) {
+            this.endTimer();
+          }
+        }, 0)
       }
     });
 
@@ -234,8 +261,9 @@ export class ScreenComponent implements OnInit{
   }
 
   private setTimer() {
-    const { backGroundColor, fontFamily , screenText, onceText, timeNum,timeNumColor,onlineNum,onlineNumColor,countNum,countNumColor } = this.timerState;
+    const { textChangeColor, backGroundColor, fontFamily , screenText, onceText, timeNum,timeNumColor,onlineNum,onlineNumColor,countNum,countNumColor } = this.timerState;
     this.screenFormGroup.patchValue({
+      textChangeColor: textChangeColor,
       backGroundColor: backGroundColor,
       fontFamily: fontFamily,
       onceText: onceText,
@@ -251,12 +279,83 @@ export class ScreenComponent implements OnInit{
     this.cdr.detectChanges();
   }
 
+  private getTimeNumAudio() {
+    const audio = localStorage.getItem('timeNumAudioData');
+    const audioSetting = JSON.parse(localStorage.getItem('audioSetting') || JSON.stringify({}));
+    const volume = audioSetting['timeNumPlayer']?.volume || 1;
+    const muted = audioSetting['timeNumPlayer']?.muted || false;
+    return {
+      audio: this.playVoice ? audio : '',
+      volume,
+      muted
+    }
+  }
+
+  private getOnlineNumAudio() {
+    const audio = localStorage.getItem('onlineNumAudioData');
+    const audioSetting = JSON.parse(localStorage.getItem('audioSetting') || JSON.stringify({}));
+    const volume = audioSetting['onlineNumPlayer']?.volume || 1;
+    const muted = audioSetting['onlineNumPlayer']?.muted || false;
+    return {
+      audio: this.playVoice ? audio : '',
+      volume,
+      muted
+    }
+  }
+
+  private getCountNumAudio() {
+    const audio = localStorage.getItem('countNumAudioData');
+    const audioSetting = JSON.parse(localStorage.getItem('audioSetting') || JSON.stringify({}));
+    const volume = audioSetting['countNumPlayer']?.volume || 1;
+    const muted = audioSetting['countNumPlayer']?.muted || false;
+    return {
+      audio: this.playVoice ? audio : '',
+      volume,
+      muted
+    }
+  }
+
   private startTimer() {
     this.timeInterval = setInterval(() => {
       const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
       if(onlineNum) {
+        if(onlineNum === this.initializeState['onlineNum']) {
+          const onlineNumAudio = this.getOnlineNumAudio();
+          if(onlineNumAudio.audio) {
+            const audio = new Audio(onlineNumAudio.audio);
+            audio.muted = onlineNumAudio.muted;
+            audio.volume = onlineNumAudio.volume;
+            audio.play().catch(error => {
+                console.error('播放失败:', error);
+            });
+          }
+        }
         this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
       } else if(timeNum) {
+        if(timeNum === this.initializeState['timeNum']) {
+          const timeNumAudio = this.getTimeNumAudio();
+          if(timeNumAudio.audio) {
+            const audio = new Audio(timeNumAudio.audio);
+            audio.muted = timeNumAudio.muted;
+            audio.volume = timeNumAudio.volume;
+            audio.play().catch(error => {
+                console.error('播放失败:', error);
+            });
+          }
+        }
+
+        if(timeNum === this.initializeState['countNum']) {
+          const countNumAudio = this.getCountNumAudio();
+          if(countNumAudio.audio) {
+            const audio = new Audio(countNumAudio.audio);
+            audio.muted = countNumAudio.muted;
+            audio.volume = countNumAudio.volume;
+            audio.play().catch(error => {
+                console.error('播放失败:', error);
+            });
+          }
+        }
+
         this.screenFormGroup.controls['timeNum'].patchValue(timeNum - 1);
       }
       this.cdr.detectChanges();
@@ -268,6 +367,17 @@ export class ScreenComponent implements OnInit{
     if(onlineNum) {
       this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
     }
+    clearInterval(this.timeInterval);
+    this.cdr.detectChanges();
+  }
+
+  private endTimer() {
+    const { onlineNum, timeNum } = this.screenFormGroup.getRawValue();
+    if(onlineNum) {
+      this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
+    }
+    this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
+    this.cdr.detectChanges();
     clearInterval(this.timeInterval);
   }
 }

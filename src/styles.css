@@ -3,3 +3,11 @@ body {
     padding: 0;
     margin: 0;
 }
+
+.inner-screen .screen-text-container {
+  font-size: 24px !important;
+}
+
+.full-screen .screen-count-container {
+  gap: 120px !important;
+}
