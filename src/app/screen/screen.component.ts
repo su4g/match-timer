@@ -316,23 +316,35 @@ export class ScreenComponent implements OnInit{
   }
 
   private startTimer() {
+    const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
+    if(this.initializeState['onlineNum']) {
+      const onlineNumAudio = this.getOnlineNumAudio();
+      if(onlineNumAudio.audio) {
+        const audio = new Audio(onlineNumAudio.audio);
+        audio.muted = onlineNumAudio.muted;
+        audio.volume = onlineNumAudio.volume;
+        audio.play().catch(error => {
+            console.error('播放失败:', error);
+        });
+      }
+    } else {
+      const _timeNumAudio = this.getTimeNumAudio();
+      if(_timeNumAudio.audio) {
+        const audio = new Audio(_timeNumAudio.audio);
+        audio.muted = _timeNumAudio.muted;
+        audio.volume = _timeNumAudio.volume;
+        audio.play().catch(error => {
+            console.error('播放失败:', error);
+        });
+      }
+    }
+    this.cdr.detectChanges();
+
     this.timeInterval = setInterval(() => {
       const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
       if(onlineNum) {
-        if(onlineNum === this.initializeState['onlineNum']) {
-          const onlineNumAudio = this.getOnlineNumAudio();
-          if(onlineNumAudio.audio) {
-            const audio = new Audio(onlineNumAudio.audio);
-            audio.muted = onlineNumAudio.muted;
-            audio.volume = onlineNumAudio.volume;
-            audio.play().catch(error => {
-                console.error('播放失败:', error);
-            });
-          }
-        }
         this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
-      } else if(timeNum) {
-        if(timeNum === this.initializeState['timeNum']) {
+        if(this.initializeState['onlineNum'] && !(onlineNum - 1)) {
           const timeNumAudio = this.getTimeNumAudio();
           if(timeNumAudio.audio) {
             const audio = new Audio(timeNumAudio.audio);
@@ -343,8 +355,8 @@ export class ScreenComponent implements OnInit{
             });
           }
         }
-
-        if(timeNum === this.initializeState['countNum']) {
+      } else if(timeNum) {
+        if(timeNum - 1 === 0) {
           const countNumAudio = this.getCountNumAudio();
           if(countNumAudio.audio) {
             const audio = new Audio(countNumAudio.audio);
