@@ -162,24 +162,43 @@
                 </nz-select>
               </div>
               @if(controlFormGroup.controls['timeMode'].value === 'once') {
-                <div class="form-item">
-                  <span class="form-item-label">并行数：</span>
-                  <nz-input-number
-                    style="width: 200px"
-                    nzPlaceHolder="并行数"
-                    formControlName="groupMember"
-                    nzMin="0"
-                  />
-                  <span class="form-item-label" style="margin-left: 12px">
-                    并行显示文字：
-                  </span>
-                  <input
-                    style="width: 200px"
-                    nz-input
-                    placeholder="并行显示文字"
-                    formControlName="onceText"
-                  />
-                </div>
+<!--                <div class="form-item">-->
+<!--                  <span class="form-item-label">并行数：</span>-->
+<!--                  <nz-input-number-->
+<!--                    style="width: 200px"-->
+<!--                    nzPlaceHolder="并行数"-->
+<!--                    formControlName="groupMember"-->
+<!--                    nzMin="0"-->
+<!--                  />-->
+<!--                  <span class="form-item-label" style="margin-left: 12px">-->
+<!--                    并行显示文字：-->
+<!--                  </span>-->
+<!--                  <input-->
+<!--                    style="width: 200px"-->
+<!--                    nz-input-->
+<!--                    placeholder="并行显示文字"-->
+<!--                    formControlName="onceText"-->
+<!--                  />-->
+<!--                </div>-->
+                    <div formArrayName="onceGroup" >
+                      @for(g of $any(controlFormGroup.controls['onceGroup']).controls; track $index) {
+                        <form  [formGroup]="g">
+                          <div style="display: flex;align-items: center; margin-bottom: 12px">
+                            <span class="form-item-label"> 并行显示{{ $index + 1 }}：</span>
+                            <input
+                              style="width: 200px"
+                              nz-input
+                              [placeholder]="'并行显示' + ($index + 1)"
+                              formControlName="text"
+                            />
+                              <a (click)="removeOnceGroup($index)" nz-button nzType="text" nzDanger>
+                                <nz-icon nzType="delete" nzTheme="outline" />
+                              </a>
+                          </div>
+                        </form>
+                      }
+                      <button nz-button nzType="default" (click)="addOnceGroup()">增加并行显示</button>
+                    </div>
               }
               @if(controlFormGroup.controls['timeMode'].value === 'loop') {
                 <div formArrayName="loopGroup" >

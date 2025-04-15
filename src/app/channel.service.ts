@@ -56,7 +56,7 @@ export class ChannelService {
     isEndGroup: false,
     roundCount: 1,
     screenText: '',
-    textChangeColor: false,
+    textChangeColor: true,
     timeNum: 0,
     timeNumColor: '#00FF00',
     onlineNum: 0,

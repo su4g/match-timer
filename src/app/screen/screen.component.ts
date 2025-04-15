@@ -74,7 +74,8 @@ export class ScreenComponent implements OnInit{
   }
 
   get onceText() {
-    return this.screenFormGroup.controls['onceText'].value
+    // return this.screenFormGroup.controls['onceText'].value
+    return this.screenFormGroup.controls['text'].value
   }
 
   get screenText() {
@@ -121,6 +122,8 @@ export class ScreenComponent implements OnInit{
 
   public fontSize!: string;
 
+  public fontTextSize!: string;
+
   public dotSize!: string;
 
   public loadingDone = false;
@@ -130,6 +133,7 @@ export class ScreenComponent implements OnInit{
   getStyle() {
     const size = window.innerHeight / 3;
     this.fontSize = `${size}px`;
+    this.fontTextSize = `${size / 3}px`;
     this.dotSize = `${size / 1.5}px`
   }
 
@@ -140,6 +144,7 @@ export class ScreenComponent implements OnInit{
       fontFamily: '',
       isStartRound: false,
       onceText: '',
+      text: '',
       screenText: '',
       isStart: false,
       isStop: false,
@@ -209,7 +214,9 @@ export class ScreenComponent implements OnInit{
         patchValue[k] = value[k];
       }
     });
+    console.log(patchValue)
     this.screenFormGroup.patchValue(patchValue);
+    this.cdr.detectChanges();
   }
 
   private listenScreenFromChange() {
@@ -261,12 +268,23 @@ export class ScreenComponent implements OnInit{
   }
 
   private setTimer() {
-    const { textChangeColor, backGroundColor, fontFamily , screenText, onceText, timeNum,timeNumColor,onlineNum,onlineNumColor,countNum,countNumColor } = this.timerState;
+    const {
+      textChangeColor,
+      backGroundColor,
+      fontFamily ,
+      screenText,
+      // onceText,
+      timeNum,
+      timeNumColor,
+      onlineNum,
+      onlineNumColor,
+      countNum,countNumColor
+    } = this.timerState;
     this.screenFormGroup.patchValue({
       textChangeColor: textChangeColor,
       backGroundColor: backGroundColor,
       fontFamily: fontFamily,
-      onceText: onceText,
+      // onceText: onceText,
       screenText: screenText,
       timeNum: Number(timeNum),
       timeNumColor: timeNumColor,

@@ -118,6 +118,9 @@ export class ControlComponent implements OnInit {
     this.controlFormGroup = this.fb.group(Object.assign(this.channelService.timerState, {
       loopGroup: this.fb.array([])
     }));
+    this.controlFormGroup = this.fb.group(Object.assign(this.channelService.timerState, {
+      onceGroup: this.fb.array([])
+    }));
     this.listenControlChange();
 
     localStorage.removeItem('countNumAudioData');
@@ -160,16 +163,19 @@ export class ControlComponent implements OnInit {
       .subscribe(v=>{
         if(v) {
           const { timeMode, groupMember, onceText } = this.controlFormGroup.getRawValue();
+          const fa = this.controlFormGroup.get('onceGroup') as FormArray;
           switch (timeMode) {
             case 'loop':
               break;
             default:
               for (let index = 0; index < groupMember; index++) {
+                console.log(fa.at(index).getRawValue())
                 this.channelService.addScreen({
                   id: index + 1,
                   isStart: false,
                   isStop: false,
-                  text: onceText
+                  text: fa.at(index).getRawValue().text
+                  // text: onceText
                 });
               }
               if(groupMember) {
@@ -195,10 +201,30 @@ export class ControlComponent implements OnInit {
           (this.controlFormGroup.controls['loopGroup'] as FormArray).push(this.fb.group({
             text: ''
           }));
+          (this.controlFormGroup.controls['onceGroup'] as FormArray).clear();
         } else {
+          (this.controlFormGroup.controls['onceGroup'] as FormArray).push(this.fb.group({
+            text: ''
+          }));
           (this.controlFormGroup.controls['loopGroup'] as FormArray).clear();
         }
       })
+  }
+
+  addOnceGroup() {
+    (this.controlFormGroup.controls['onceGroup'] as FormArray).push(this.fb.group({
+      text: ''
+    }));
+    this.controlFormGroup.controls['groupMember'].patchValue(
+      (this.controlFormGroup.controls['onceGroup'] as FormArray).length
+    );
+  }
+
+  removeOnceGroup(index: number) {
+    (this.controlFormGroup.controls['onceGroup'] as FormArray).removeAt(index);
+    this.controlFormGroup.controls['groupMember'].patchValue(
+      (this.controlFormGroup.controls['onceGroup'] as FormArray).length
+    );
   }
 
   addLoopGroup() {

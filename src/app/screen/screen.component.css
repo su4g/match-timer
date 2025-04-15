@@ -48,6 +48,7 @@
 .screen-text-container-1 {
   border: 1px solid;
   padding: 4px 8px;
+  line-height: 1.2;
 }
 
 @font-face {

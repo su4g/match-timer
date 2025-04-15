@@ -32,8 +32,9 @@
             </div>
             <div class="screen-text-container"
                  [style]="{
-                     fontFamily: fontFamily
-                     }">
+                     fontFamily: fontFamily,
+                     fontSize: fontTextSize
+                 }">
                 <div *ngIf="screenText" class="screen-text-container-1" >
                     <span [style]="{ color: isTextChangeColor ? background : '#fff' }">
                         {{ screenText }}
