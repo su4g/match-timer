@@ -9,5 +9,6 @@ body {
 }
 
 .full-screen .screen-count-container {
-  gap: 120px !important;
+  /*gap: 120px !important;*/
+  /*  gap: 24px !important;*/
 }

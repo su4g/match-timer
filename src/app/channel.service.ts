@@ -16,6 +16,7 @@ export interface ScreenStateInfo {
 
 export interface TimerStateInfo {
   backGroundColor: string;
+  fontFamilyCalc: number;
   fontFamily: string;
   isStartRound: boolean;
   isEndRound: boolean;
@@ -47,6 +48,7 @@ export class ChannelService {
   channel!: BroadcastChannel;
 
   timerState: TimerStateInfo = {
+    fontFamilyCalc: 3,
     backGroundColor: '#000',
     fontFamily: 'led regular',
     isStartRound: false,

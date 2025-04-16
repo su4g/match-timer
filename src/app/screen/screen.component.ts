@@ -5,14 +5,14 @@ import {
   ElementRef,
   HostBinding,
   inject,
-  Input,
-  OnInit,
+  Input, NgZone,
+  OnInit, Renderer2,
   ViewChild
 } from '@angular/core';
 import { ChannelService } from '../channel.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter, map, Subject } from 'rxjs';
+import {distinctUntilChanged, filter, map, Subject, take, takeLast} from 'rxjs';
 import {FormBuilder, UntypedFormGroup} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -41,6 +41,10 @@ export class ScreenComponent implements OnInit{
 
   private fb = inject(FormBuilder);
 
+  protected  render2 = inject(Renderer2);
+
+  private  ngzone = inject(NgZone);
+
   @Input() screenId!: any;
 
   @Input() playVoice = true;
@@ -59,6 +63,10 @@ export class ScreenComponent implements OnInit{
 
   get timeNum() {
     return this.screenFormGroup.controls['timeNum'].value
+  }
+
+  get initTimeNum() {
+    return this.initializeState?.['timeNum']
   }
 
   get onlineNum() {
@@ -88,6 +96,10 @@ export class ScreenComponent implements OnInit{
 
   get fontFamily() {
     return this.screenFormGroup.controls['fontFamily'].value
+  }
+
+  get fontFamilyCalc() {
+    return this.screenFormGroup.controls['fontFamilyCalc'].value || 3
   }
 
   public isFullScreen = false;
@@ -130,11 +142,32 @@ export class ScreenComponent implements OnInit{
 
   @ViewChild('screenRef') screenRef!: ElementRef;
 
+  @ViewChild('screenContainer') screenContainerRef!: ElementRef;
+
+  @ViewChild('screenNumberContainer') screenNumberContainerRef!: ElementRef;
+
+  @ViewChild('screenDotContainer') screenDotContainerRef!: ElementRef;
+
   getStyle() {
-    const size = window.innerHeight / 3;
+    const _fontFamilyCalc = this.playVoice ? this.fontFamilyCalc : 3;
+    const size = window.innerHeight / _fontFamilyCalc;
     this.fontSize = `${size}px`;
-    this.fontTextSize = `${size / 3}px`;
-    this.dotSize = `${size / 1.5}px`
+    this.fontTextSize = `${Math.max(14, size / _fontFamilyCalc)}px`;
+    this.dotSize = `${Math.max(18, size / (_fontFamilyCalc / 2))}px`;
+
+    // setTimeout(()=>{
+    //   if(this.screenContainerRef?.nativeElement && this.screenNumberContainerRef?.nativeElement) {
+    //       // this.render2.removeStyle(this.screenContainerRef?.nativeElement, 'width' );
+    //       setTimeout(()=> {
+    //         const clientWidth = this.screenNumberContainerRef?.nativeElement?.clientWidth;
+    //         const dotWidth = this.screenDotContainerRef?.nativeElement?.clientWidth || clientWidth;
+    //
+    //         if(clientWidth && this.screenContainerRef?.nativeElement) {
+    //           this.render2.setStyle(this.screenContainerRef.nativeElement, 'width' , `${clientWidth + dotWidth + 24}px`)
+    //         }
+    //       }, 0)
+    //     }
+    // }, 0)
   }
 
   ngOnInit(): void {
@@ -142,6 +175,7 @@ export class ScreenComponent implements OnInit{
       textChangeColor: false,
       backGroundColor: '',
       fontFamily: '',
+      fontFamilyCalc: 3,
       isStartRound: false,
       onceText: '',
       text: '',
@@ -214,7 +248,6 @@ export class ScreenComponent implements OnInit{
         patchValue[k] = value[k];
       }
     });
-    console.log(patchValue)
     this.screenFormGroup.patchValue(patchValue);
     this.cdr.detectChanges();
   }
@@ -253,6 +286,15 @@ export class ScreenComponent implements OnInit{
         this.stopTimer();
       }
     });
+
+    this.screenFormGroup.controls['fontFamilyCalc'].valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(v=>{
+      if(v && this.playVoice) {
+        this.getStyle();
+      }
+    });
   }
 
   private listenScreenState() {
@@ -272,6 +314,7 @@ export class ScreenComponent implements OnInit{
       textChangeColor,
       backGroundColor,
       fontFamily ,
+      fontFamilyCalc,
       screenText,
       // onceText,
       timeNum,
@@ -284,6 +327,7 @@ export class ScreenComponent implements OnInit{
       textChangeColor: textChangeColor,
       backGroundColor: backGroundColor,
       fontFamily: fontFamily,
+      fontFamilyCalc: fontFamilyCalc,
       // onceText: onceText,
       screenText: screenText,
       timeNum: Number(timeNum),

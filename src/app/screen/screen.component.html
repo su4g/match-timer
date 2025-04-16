@@ -1,9 +1,10 @@
 <div #screenRef class="screen-container" [style]="{'background-color': backGroundColor}">
     <div>
         @if(loadingDone) {
-            <div class="screen-count-container">
+            <div #screenContainer class="screen-count-container">
                 <div
                     class="screen-dot"
+                     #screenDotContainer
                     [style]="{
                         background: background ,
                         width: dotSize,
@@ -12,23 +13,42 @@
                 >
                 </div>
 
-                <div class="screen-number"
-                     [style]="{
-                     fontSize: fontSize,
-                     color: background,
-                     fontFamily: fontFamily,
-                     lineHeight: fontSize
-                     }">
-                    @if(isStart) {
-                        @if (onlineNum) {
-                            {{ onlineNum }}
-                        } @else {
-                            {{ timeNum }}
-                        }
-                    } @else {
-                        {{ timeNum }}
-                    }
+                <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;"
+                >
+                  <div
+                    class="screen-number"
+                    [style]="{
+                    fontSize: fontSize,
+                    fontFamily: fontFamily,
+                    visibility: 'hidden',
+                    height: '0',
+                    marginLeft: '24px'
+                  }">
+                    {{ initTimeNum }}
+                  </div>
+                  <div class="screen-number"
+                       #screenNumberContainer
+                       [style]="{
+                       fontSize: fontSize,
+                       color: background,
+                       fontFamily: fontFamily,
+                       lineHeight: fontSize
+                       }">
+                      @if(isStart) {
+                          @if (onlineNum) {
+                              {{ onlineNum }}
+                          } @else {
+                              {{ timeNum }}
+                          }
+                      } @else {
+                          {{ timeNum }}
+                      }
+                  </div>
                 </div>
+
             </div>
             <div class="screen-text-container"
                  [style]="{
