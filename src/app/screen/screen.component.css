@@ -52,13 +52,3 @@
   line-height: 1.2;
 }
 
-@font-face {
-  font-family: 'led regular';
-  src: url('../../../public/digital-7.ttf');
-}
-
-
-@font-face {
-  font-family: 'eth regular';
-  src: url('../../../public/Ethnocentric Rg.otf');
-}

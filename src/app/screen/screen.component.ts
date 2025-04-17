@@ -132,6 +132,10 @@ export class ScreenComponent implements OnInit{
     return this.screenFormGroup.get('textChangeColor')?.value;
   }
 
+  get fontFamilyMargin() {
+    return this.playVoice ? `${this.screenFormGroup.get('fontFamilyMargin')?.value || 24}px` : '24px';
+  }
+
   public fontSize!: string;
 
   public fontTextSize!: string;
@@ -152,7 +156,7 @@ export class ScreenComponent implements OnInit{
     const _fontFamilyCalc = this.playVoice ? this.fontFamilyCalc : 3;
     const size = window.innerHeight / _fontFamilyCalc;
     this.fontSize = `${size}px`;
-    this.fontTextSize = `${Math.max(14, size / _fontFamilyCalc)}px`;
+    this.fontTextSize = `${Math.max(16, size / _fontFamilyCalc)}px`;
     this.dotSize = `${Math.max(18, size / (_fontFamilyCalc / 2))}px`;
 
     // setTimeout(()=>{
@@ -175,6 +179,7 @@ export class ScreenComponent implements OnInit{
       textChangeColor: false,
       backGroundColor: '',
       fontFamily: '',
+      fontFamilyMargin: 24,
       fontFamilyCalc: 3,
       isStartRound: false,
       onceText: '',
@@ -315,6 +320,7 @@ export class ScreenComponent implements OnInit{
       backGroundColor,
       fontFamily ,
       fontFamilyCalc,
+      fontFamilyMargin,
       screenText,
       // onceText,
       timeNum,
@@ -324,6 +330,7 @@ export class ScreenComponent implements OnInit{
       countNum,countNumColor
     } = this.timerState;
     this.screenFormGroup.patchValue({
+      fontFamilyMargin: fontFamilyMargin,
       textChangeColor: textChangeColor,
       backGroundColor: backGroundColor,
       fontFamily: fontFamily,
@@ -379,7 +386,7 @@ export class ScreenComponent implements OnInit{
 
   private startTimer() {
     const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
-    if(this.initializeState['onlineNum']) {
+    if(this.initializeState['onlineNum'] && onlineNum) {
       const onlineNumAudio = this.getOnlineNumAudio();
       if(onlineNumAudio.audio) {
         const audio = new Audio(onlineNumAudio.audio);
@@ -390,14 +397,16 @@ export class ScreenComponent implements OnInit{
         });
       }
     } else {
-      const _timeNumAudio = this.getTimeNumAudio();
-      if(_timeNumAudio.audio) {
-        const audio = new Audio(_timeNumAudio.audio);
-        audio.muted = _timeNumAudio.muted;
-        audio.volume = _timeNumAudio.volume;
-        audio.play().catch(error => {
-            console.error('播放失败:', error);
-        });
+      if(timeNum) {
+        const _timeNumAudio = this.getTimeNumAudio();
+        if(_timeNumAudio.audio) {
+          const audio = new Audio(_timeNumAudio.audio);
+          audio.muted = _timeNumAudio.muted;
+          audio.volume = _timeNumAudio.volume;
+          audio.play().catch(error => {
+              console.error('播放失败:', error);
+          });
+        }
       }
     }
     this.cdr.detectChanges();

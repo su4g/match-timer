@@ -12,3 +12,50 @@ body {
   /*gap: 120px !important;*/
   /*  gap: 24px !important;*/
 }
+
+
+@font-face {
+  font-family: 'led regular';
+  src: url('../public/digital-7.ttf');
+}
+
+@font-face {
+  font-family: 'eth regular';
+  src: url('../public/Ethnocentric Rg.otf');
+}
+
+@font-face {
+  font-family: 'Starjout regular';
+  src: url('../public/Starjout.ttf');
+}
+
+@font-face {
+  font-family: 'STJEDISE regular';
+  src: url('../public/STJEDISE.TTF');
+}
+
+@font-face {
+  font-family: 'PIXELYA regular';
+  src: url('../public/PIXELYA Trial.otf');
+}
+
+@font-face {
+  font-family: 'alarm regular';
+  src: url('../public/alarm clock.ttf');
+}
+
+@font-face {
+  font-family: 'Overseer regular';
+  src: url('../public/Overseer.otf');
+}
+
+
+@font-face {
+  font-family: 'Overseer Italic regular';
+  src: url('../public/Overseer Italic.otf');
+}
+
+@font-face {
+  font-family: 'Square regular';
+  src: url('../public/Square.ttf');
+}

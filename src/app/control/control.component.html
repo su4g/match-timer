@@ -226,10 +226,63 @@
                 <span class="form-item-label">
                   计时器字体：
                 </span>
-                <nz-select style="width: 200px" formControlName="fontFamily">
-                  <nz-option nzValue="led regular" nzLabel="LCD"></nz-option>
-                  <nz-option nzValue="eth regular" nzLabel="液晶"></nz-option>
+                <nz-select style="width: 200px" formControlName="fontFamily" [nzCustomTemplate]="multipleTemplate">
+<!--                  <nz-option nzValue="default" nzCustomContent>-->
+<!--                    <span style="font-family: 'default'">-->
+<!--                      1234567890-->
+<!--                    </span>-->
+<!--                  </nz-option>-->
+                  <nz-option nzValue="led regular" nzLabel="LCD" nzCustomContent>
+                    <span style="font-family: 'led regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="eth regular" nzLabel="液晶" nzCustomContent>
+                    <span style="font-family: 'eth regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="Starjout regular" nzCustomContent>
+                    <span style="font-family: 'Starjout regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="STJEDISE regular" nzCustomContent>
+                    <span style="font-family: 'STJEDISE regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="PIXELYA regular" nzCustomContent>
+                    <span style="font-family: 'PIXELYA regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="alarm regular" nzCustomContent>
+                    <span style="font-family: 'alarm regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="Overseer regular" nzCustomContent>
+                    <span style="font-family: 'Overseer regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="Overseer Italic regular" nzCustomContent>
+                    <span style="font-family: 'Overseer Italic regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
+                  <nz-option nzValue="Square regular" nzCustomContent>
+                    <span style="font-family: 'Square regular'">
+                      1234567890
+                    </span>
+                  </nz-option>
                 </nz-select>
+                <ng-template #multipleTemplate let-selected>
+                  <div [style]="{'font-family': selected.nzValue}">
+                    1234567890
+                  </div>
+                </ng-template>
               </div>
               <div class="form-item">
                 <span class="form-item-label">
@@ -240,6 +293,17 @@
                   nzPlaceHolder="计时器字体缩放比"
                   formControlName="fontFamilyCalc"
                   nzMin="1"
+                />
+              </div>
+              <div class="form-item">
+                <span class="form-item-label">
+                  字体间距：
+                </span>
+                 <nz-input-number
+                  style="width: 200px"
+                  nzPlaceHolder="计时器字体间距"
+                  formControlName="fontFamilyMargin"
+                  nzMin="0"
                 />
               </div>
               <div class="form-item">
