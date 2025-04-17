@@ -201,6 +201,12 @@
                     </div>
               }
               @if(controlFormGroup.controls['timeMode'].value === 'loop') {
+                <div class="form-item">
+                  <span class="form-item-label">
+                    每组单独上线：
+                  </span>
+                  <label nz-checkbox formControlName="loopOnlineNum"></label>
+                </div>
                 <div formArrayName="loopGroup" >
                   @for(g of $any(controlFormGroup.controls['loopGroup']).controls; track $index) {
                     <form  [formGroup]="g">

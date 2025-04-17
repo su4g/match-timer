@@ -102,6 +102,8 @@ export class ScreenComponent implements OnInit{
     return this.screenFormGroup.controls['fontFamilyCalc'].value || 3
   }
 
+  public currentLoopIndex = 0;
+
   public isFullScreen = false;
 
   private initializeState!: any;
@@ -192,7 +194,10 @@ export class ScreenComponent implements OnInit{
       onlineNum: 0,
       onlineNumColor: '',
       countNum: 0,
-      countNumColor: ''
+      countNumColor: '',
+      textGroup: [],
+      timeMode: '',
+      loopOnlineNum: false,
     });
 
     if(this.screenId) {
@@ -233,7 +238,7 @@ export class ScreenComponent implements OnInit{
     }
 
     this.channelService.channel.onmessage = (e)=>{
-      this.timerState = e.data;
+      this.timerState = e.data;      
       const { isStartRound, timeMode, screen } = this.timerState;
       this.validPatchValue({
         isStartRound: isStartRound,
@@ -327,7 +332,10 @@ export class ScreenComponent implements OnInit{
       timeNumColor,
       onlineNum,
       onlineNumColor,
-      countNum,countNumColor
+      countNum,
+      countNumColor,
+      timeMode,
+      loopOnlineNum
     } = this.timerState;
     this.screenFormGroup.patchValue({
       fontFamilyMargin: fontFamilyMargin,
@@ -342,7 +350,9 @@ export class ScreenComponent implements OnInit{
       onlineNum: Number(onlineNum),
       onlineNumColor: onlineNumColor,
       countNum: Number(countNum),
-      countNumColor: countNumColor
+      countNumColor: countNumColor,
+      timeMode: timeMode,
+      loopOnlineNum: loopOnlineNum
     });
     this.initializeState = JSON.parse(JSON.stringify(this.screenFormGroup.getRawValue()));
     this.cdr.detectChanges();
@@ -385,64 +395,72 @@ export class ScreenComponent implements OnInit{
   }
 
   private startTimer() {
-    const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
-    if(this.initializeState['onlineNum'] && onlineNum) {
-      const onlineNumAudio = this.getOnlineNumAudio();
-      if(onlineNumAudio.audio) {
-        const audio = new Audio(onlineNumAudio.audio);
-        audio.muted = onlineNumAudio.muted;
-        audio.volume = onlineNumAudio.volume;
-        audio.play().catch(error => {
-            console.error('播放失败:', error);
-        });
-      }
+    const { timeNum, onlineNum, timeMode , loopOnlineNum, textGroup } = this.screenFormGroup.getRawValue();
+
+    console.log(timeMode, loopOnlineNum, textGroup);
+    
+    if(timeMode === 'loop') {
+
     } else {
-      if(timeNum) {
-        const _timeNumAudio = this.getTimeNumAudio();
-        if(_timeNumAudio.audio) {
-          const audio = new Audio(_timeNumAudio.audio);
-          audio.muted = _timeNumAudio.muted;
-          audio.volume = _timeNumAudio.volume;
+      if(this.initializeState['onlineNum'] && onlineNum) {
+        const onlineNumAudio = this.getOnlineNumAudio();
+        if(onlineNumAudio.audio) {
+          const audio = new Audio(onlineNumAudio.audio);
+          audio.muted = onlineNumAudio.muted;
+          audio.volume = onlineNumAudio.volume;
           audio.play().catch(error => {
               console.error('播放失败:', error);
           });
         }
-      }
-    }
-    this.cdr.detectChanges();
-
-    this.timeInterval = setInterval(() => {
-      const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
-      if(onlineNum) {
-        this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
-        if(this.initializeState['onlineNum'] && !(onlineNum - 1)) {
-          const timeNumAudio = this.getTimeNumAudio();
-          if(timeNumAudio.audio) {
-            const audio = new Audio(timeNumAudio.audio);
-            audio.muted = timeNumAudio.muted;
-            audio.volume = timeNumAudio.volume;
+      } else {
+        if(timeNum) {
+          const _timeNumAudio = this.getTimeNumAudio();
+          if(_timeNumAudio.audio) {
+            const audio = new Audio(_timeNumAudio.audio);
+            audio.muted = _timeNumAudio.muted;
+            audio.volume = _timeNumAudio.volume;
             audio.play().catch(error => {
                 console.error('播放失败:', error);
             });
           }
         }
-      } else if(timeNum) {
-        if(timeNum - 1 === 0) {
-          const countNumAudio = this.getCountNumAudio();
-          if(countNumAudio.audio) {
-            const audio = new Audio(countNumAudio.audio);
-            audio.muted = countNumAudio.muted;
-            audio.volume = countNumAudio.volume;
-            audio.play().catch(error => {
-                console.error('播放失败:', error);
-            });
-          }
-        }
-
-        this.screenFormGroup.controls['timeNum'].patchValue(timeNum - 1);
       }
       this.cdr.detectChanges();
-    }, 1000);
+  
+      this.timeInterval = setInterval(() => {
+        const { timeNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
+        if(onlineNum) {
+          this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
+          if(this.initializeState['onlineNum'] && !(onlineNum - 1)) {
+            const timeNumAudio = this.getTimeNumAudio();
+            if(timeNumAudio.audio) {
+              const audio = new Audio(timeNumAudio.audio);
+              audio.muted = timeNumAudio.muted;
+              audio.volume = timeNumAudio.volume;
+              audio.play().catch(error => {
+                  console.error('播放失败:', error);
+              });
+            }
+          }
+        } else if(timeNum) {
+          if(timeNum - 1 === 0) {
+            const countNumAudio = this.getCountNumAudio();
+            if(countNumAudio.audio) {
+              const audio = new Audio(countNumAudio.audio);
+              audio.muted = countNumAudio.muted;
+              audio.volume = countNumAudio.volume;
+              audio.play().catch(error => {
+                  console.error('播放失败:', error);
+              });
+            }
+          }
+  
+          this.screenFormGroup.controls['timeNum'].patchValue(timeNum - 1);
+        }
+        this.cdr.detectChanges();
+      }, 1000);
+    }
+
   }
 
   private stopTimer() {

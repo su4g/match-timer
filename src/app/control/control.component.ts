@@ -166,10 +166,20 @@ export class ControlComponent implements OnInit {
           const fa = this.controlFormGroup.get('onceGroup') as FormArray;
           switch (timeMode) {
             case 'loop':
+              const loopGroup = this.controlFormGroup.get('loopGroup') as FormArray;
+              this.channelService.addScreen({
+                id: 1,
+                isStart: false,
+                isStop: false,
+                textGroup: loopGroup.getRawValue().map(t=>{ return t.text }),
+              });
+              if(loopGroup.getRawValue().length > 0) {
+                this.screenRef.nativeElement.style.maxHeight = '400px';
+                this.panelActive = false;
+              }
               break;
             default:
               for (let index = 0; index < groupMember; index++) {
-                console.log(fa.at(index).getRawValue())
                 this.channelService.addScreen({
                   id: index + 1,
                   isStart: false,

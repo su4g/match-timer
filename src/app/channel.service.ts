@@ -11,7 +11,8 @@ export interface ScreenStateInfo {
   id: any;
   isStart: boolean;
   isStop: boolean;
-  text: string;
+  text?: string;
+  textGroup?: string[];
 }
 
 export interface TimerStateInfo {
@@ -27,14 +28,15 @@ export interface TimerStateInfo {
   roundCount: number;
   screenText: string;
   textChangeColor: boolean;
-  timeNum: number,
-  timeNumColor: string,
-  onlineNum: number,
-  onlineNumColor: string,
-  countNum: number,
-  countNumColor: string,
+  timeNum: number;
+  timeNumColor: string;
+  onlineNum: number;
+  onlineNumColor: string;
+  countNum: number;
+  countNumColor: string;
   // matchMode: MatchModeType | null,
-  timeMode: 'once' | 'loop',
+  timeMode: 'once' | 'loop';
+  loopOnlineNum: boolean;
   groupMember: number;
   onceText: string;
   loopGroup: [];
@@ -68,6 +70,7 @@ export class ChannelService {
     countNum: 0,
     countNumColor: '#FFFF00',
     timeMode: 'once',
+    loopOnlineNum: true,
     groupMember: 0,
     onceText: '',
     loopGroup: [],
