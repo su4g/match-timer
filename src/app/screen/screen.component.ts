@@ -477,7 +477,6 @@ export class ScreenComponent implements OnInit{
 
       this.timeInterval = setInterval(() => {
         const { timeNum, loopOnlineNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
-        console.log(this.currentLoopIndex, textGroup, timeNum)
         this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
         if(onlineNum) {
             this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
@@ -501,7 +500,7 @@ export class ScreenComponent implements OnInit{
     } else {
       this.playStartVoice(onlineNum, timeNum);
       this.timeInterval = setInterval(() => {
-        const { timeNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
+        const { timeNum, onlineNum  } = this.screenFormGroup.getRawValue();
         if(onlineNum) {
           this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
           if(this.initializeState['onlineNum'] && !(onlineNum - 1)) {
@@ -567,12 +566,14 @@ export class ScreenComponent implements OnInit{
 
   private endTimer() {
     this.playCountAudio();
-    const { textGroup } = this.screenFormGroup.getRawValue();
+    const { textGroup, timeMode } = this.screenFormGroup.getRawValue();
     this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
     this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
-    this.currentLoopIndex = 0;
-    this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
-    this.screenFormGroup.controls['isNext'].patchValue(false);
+    if(timeMode === 'loop') {
+      this.currentLoopIndex = 0;
+      this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
+      this.screenFormGroup.controls['isNext'].patchValue(false);
+    }
     this.cdr.detectChanges();
     clearInterval(this.timeInterval);
   }

@@ -330,7 +330,7 @@
         }
 
         @if(timerState['isStartGroup']) {
-            <button nz-button nzType="primary" (click)="nextGroup()">下一组</button>
+            <button *ngIf="controlFormGroup.get('timeMode')?.value === 'loop'" nz-button nzType="primary" (click)="nextGroup()">下一组</button>
             <button nz-button nzDanger nzType="primary" (click)="stopGroup()">暂停组</button>
             <button nz-button nzDanger nzType="primary" (click)="endGroup()">停止组</button>
           } @else {
