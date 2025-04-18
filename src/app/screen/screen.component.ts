@@ -566,6 +566,7 @@ export class ScreenComponent implements OnInit{
   }
 
   private endTimer() {
+    this.playCountAudio();
     const { textGroup } = this.screenFormGroup.getRawValue();
     this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
     this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
