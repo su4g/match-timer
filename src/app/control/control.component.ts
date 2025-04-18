@@ -267,6 +267,7 @@ export class ControlComponent implements OnInit {
     this.channelService.timerState['screen'].forEach((item: any) =>{
       item.isStart = true;
       item.isStop = false;
+      item.isNext = false;
     });
     this.controlFormGroup.controls['isStartGroup'].patchValue(true);
   }
@@ -282,6 +283,7 @@ export class ControlComponent implements OnInit {
     this.channelService.timerState['screen'].forEach((item: any) =>{
       item.isStart = false;
       item.isStop = false;
+      item.isNext = false;
     });
     this.controlFormGroup.controls['isStartGroup'].patchValue(false);
   }
@@ -290,6 +292,7 @@ export class ControlComponent implements OnInit {
     this.channelService.timerState['screen'].forEach((item: any) =>{
       item.isStop = true;
       item.isStart = false;
+      item.isNext = false;
     });
     this.controlFormGroup.controls['isStartGroup'].patchValue(false);
   }

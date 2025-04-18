@@ -477,6 +477,7 @@ export class ScreenComponent implements OnInit{
 
       this.timeInterval = setInterval(() => {
         const { timeNum, loopOnlineNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
+        console.log(this.currentLoopIndex, textGroup, timeNum)
         this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
         if(onlineNum) {
             this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
