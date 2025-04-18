@@ -271,6 +271,13 @@ export class ControlComponent implements OnInit {
     this.controlFormGroup.controls['isStartGroup'].patchValue(true);
   }
 
+  nextGroup() {
+    this.channelService.timerState['screen'].forEach((item: any) =>{
+      item.isNext = true;
+    });
+    this.controlFormGroup.controls['isStartGroup'].patchValue(true);
+  }
+
   endGroup() {
     this.channelService.timerState['screen'].forEach((item: any) =>{
       item.isStart = false;

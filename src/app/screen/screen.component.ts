@@ -189,6 +189,7 @@ export class ScreenComponent implements OnInit{
       screenText: '',
       isStart: false,
       isStop: false,
+      isNext: false,
       timeNum: 0,
       timeNumColor: '',
       onlineNum: 0,
@@ -238,7 +239,7 @@ export class ScreenComponent implements OnInit{
     }
 
     this.channelService.channel.onmessage = (e)=>{
-      this.timerState = e.data;      
+      this.timerState = e.data;
       const { isStartRound, timeMode, screen } = this.timerState;
       this.validPatchValue({
         isStartRound: isStartRound,
@@ -285,6 +286,16 @@ export class ScreenComponent implements OnInit{
             this.endTimer();
           }
         }, 0)
+      }
+    });
+
+    this.screenFormGroup.controls['isNext'].valueChanges
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe(v=>{
+      if(v) {
+        this.nextTimer();
       }
     });
 
@@ -394,15 +405,44 @@ export class ScreenComponent implements OnInit{
     }
   }
 
-  private startTimer() {
-    const { timeNum, onlineNum, timeMode , loopOnlineNum, textGroup } = this.screenFormGroup.getRawValue();
+  private playOnlineAudio() {
+    const onlineNumAudio = this.getOnlineNumAudio();
+    if(onlineNumAudio.audio) {
+      const audio = new Audio(onlineNumAudio.audio);
+      audio.muted = onlineNumAudio.muted;
+      audio.volume = onlineNumAudio.volume;
+      audio.play().catch(error => {
+          console.error('播放失败:', error);
+      });
+    }
+  }
 
-    console.log(timeMode, loopOnlineNum, textGroup);
-    
-    if(timeMode === 'loop') {
+  private playTimeAudio() {
+    const _timeNumAudio = this.getTimeNumAudio();
+    if(_timeNumAudio.audio) {
+      const audio = new Audio(_timeNumAudio.audio);
+      audio.muted = _timeNumAudio.muted;
+      audio.volume = _timeNumAudio.volume;
+      audio.play().catch(error => {
+          console.error('播放失败:', error);
+      });
+    }
+  }
 
-    } else {
-      if(this.initializeState['onlineNum'] && onlineNum) {
+  private playCountAudio() {
+    const countNumAudio = this.getCountNumAudio();
+    if(countNumAudio.audio) {
+      const audio = new Audio(countNumAudio.audio);
+      audio.muted = countNumAudio.muted;
+      audio.volume = countNumAudio.volume;
+      audio.play().catch(error => {
+          console.error('播放失败:', error);
+      });
+    }
+  }
+
+  private playStartVoice(onlineNum: number, timeNum: number) {
+    if(this.initializeState['onlineNum'] && onlineNum) {
         const onlineNumAudio = this.getOnlineNumAudio();
         if(onlineNumAudio.audio) {
           const audio = new Audio(onlineNumAudio.audio);
@@ -426,7 +466,39 @@ export class ScreenComponent implements OnInit{
         }
       }
       this.cdr.detectChanges();
-  
+  }
+
+  private startTimer() {
+    const { timeNum, onlineNum, timeMode , loopOnlineNum, textGroup } = this.screenFormGroup.getRawValue();
+    if(timeMode === 'loop') {
+      this.currentLoopIndex = 0;
+      this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
+      this.playStartVoice(onlineNum, timeNum);
+
+      this.timeInterval = setInterval(() => {
+        const { timeNum, loopOnlineNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
+        this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
+        if(onlineNum) {
+            this.screenFormGroup.controls['onlineNum'].patchValue(onlineNum - 1);
+            if(loopOnlineNum && this.initializeState['onlineNum'] && !(onlineNum - 1)) {
+              this.playTimeAudio();
+            }
+        } else if(timeNum) {
+          if(timeNum - 1 === 0) {
+            this.playCountAudio();
+
+            if(!loopOnlineNum && this.currentLoopIndex < textGroup.length - 1) {
+              setTimeout(()=>{
+                this.nextTimer();
+              },1000)
+            }
+          }
+          this.screenFormGroup.controls['timeNum'].patchValue(timeNum - 1);
+        }
+        this.cdr.detectChanges();
+      }, 1000);
+    } else {
+      this.playStartVoice(onlineNum, timeNum);
       this.timeInterval = setInterval(() => {
         const { timeNum, onlineNum, textGroup  } = this.screenFormGroup.getRawValue();
         if(onlineNum) {
@@ -454,7 +526,6 @@ export class ScreenComponent implements OnInit{
               });
             }
           }
-  
           this.screenFormGroup.controls['timeNum'].patchValue(timeNum - 1);
         }
         this.cdr.detectChanges();
@@ -463,19 +534,43 @@ export class ScreenComponent implements OnInit{
 
   }
 
+  private nextTimer() {
+    const {
+      loopOnlineNum,
+      textGroup
+    } = this.screenFormGroup.getRawValue();
+
+    this.currentLoopIndex = Math.min(textGroup.length - 1, this.currentLoopIndex + 1);
+    this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
+    this.screenFormGroup.controls['isNext'].patchValue(false);
+    this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
+
+    if(loopOnlineNum && this.initializeState['onlineNum']) {
+      this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
+      this.playOnlineAudio();
+    } else {
+      this.playTimeAudio();
+    }
+    this.cdr.detectChanges();
+  }
+
   private stopTimer() {
     const { onlineNum } = this.screenFormGroup.getRawValue();
     if(onlineNum) {
       this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
+
     }
     clearInterval(this.timeInterval);
     this.cdr.detectChanges();
   }
 
   private endTimer() {
-    // const { onlineNum, timeNum } = this.screenFormGroup.getRawValue();
+    const { textGroup } = this.screenFormGroup.getRawValue();
     this.screenFormGroup.controls['onlineNum'].patchValue(this.initializeState['onlineNum']);
     this.screenFormGroup.controls['timeNum'].patchValue(this.initializeState['timeNum']);
+    this.currentLoopIndex = 0;
+    this.screenFormGroup.controls['text'].patchValue(textGroup[this.currentLoopIndex]);
+    this.screenFormGroup.controls['isNext'].patchValue(false);
     this.cdr.detectChanges();
     clearInterval(this.timeInterval);
   }
